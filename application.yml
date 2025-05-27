@@ -1,0 +1,26 @@
+spring:
+  profiles:
+    active: default
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    com.example: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,refresh
+  endpoint:
+    health:
+      show-details: always
+    refresh:
+      enabled: true
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
