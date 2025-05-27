@@ -1,5 +1,5 @@
 server:
-  port: 8081  # Changed from 8081 to avoid conflict with customer-service
+  port: 8081  # Must match what's registered in Eureka (8081)
 
 spring:
   application:
@@ -8,26 +8,28 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: false  # Disabled to use explicit routes
+          enabled: false 
       routes:
         - id: customer-service
-          uri: lb://customer-service  # Lowercase to match Eureka registration
+          uri: lb://CUSTOMER-SERVICE
           predicates:
             - Path=/api/customers/**
           filters:
-            - StripPrefix=1  # Removes /api/customers prefix before forwarding
+            - RewritePath=/api/customers/(?<segment>.*), /$\{segment}  # Remove /api/customers prefix
+        
         - id: product-service
-          uri: lb://product-service
+          uri: lb://PRODUCT-SERVICE
           predicates:
             - Path=/api/products/**
           filters:
-            - StripPrefix=1
+            - RewritePath=/api/products/(?<segment>.*), /$\{segment}
+        
         - id: order-service
-          uri: lb://order-service
+          uri: lb://ORDER-SERVICE
           predicates:
             - Path=/api/orders/**
           filters:
-            - StripPrefix=1
+            - RewritePath=/api/orders/(?<segment>.*), /$\{segment}
 
 eureka:
   client:
@@ -42,7 +44,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
+        include: health,info,gateway
   endpoint:
     health:
       show-details: always
