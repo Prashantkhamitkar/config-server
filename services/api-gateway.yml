@@ -16,10 +16,6 @@ spring:
             - Path=/api/customers/{segment}  # Explicit path variable
           filters:
             - SetPath=/customers/{segment}  # More reliable path rewriting
-            - name: CircuitBreaker
-              args:
-                name: customerService
-                fallbackUri: forward:/fallback/customer
 
         - id: product-service
           uri: lb://PRODUCT-SERVICE
