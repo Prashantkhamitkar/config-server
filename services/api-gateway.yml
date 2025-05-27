@@ -44,7 +44,12 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,gateway
+        include: gateway,routes,health,info  # Explicitly include gateway endpoints
+      base-path: /actuator  # Ensure base path is set
   endpoint:
+    gateway:
+      enabled: true  # Explicitly enable gateway endpoint
     health:
       show-details: always
+    routes:
+      enabled: true
