@@ -41,10 +41,6 @@ eureka:
     lease-renewal-interval-in-seconds: 10
 
 management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,gateway,routes,globalfilters
   endpoint:
     gateway:
       enabled: true
@@ -52,3 +48,10 @@ management:
       enabled: true
     health:
       show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"  
+      base-path: /actuator
+      path-mapping:
+        health: health
