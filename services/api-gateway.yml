@@ -13,29 +13,16 @@ spring:
         - id: customer-service
           uri: lb://CUSTOMER-SERVICE
           predicates:
-            - Path=/api/customers/{segment}  # Explicit path variable
+            - Path=/api/customers/**
           filters:
-            - SetPath=/customers/{segment}  # More reliable path rewriting
-
-        - id: product-service
-          uri: lb://PRODUCT-SERVICE
-          predicates:
-            - Path=/api/products/{segment}
-          filters:
-            - SetPath=/products/{segment}
-
-        - id: order-service
-          uri: lb://ORDER-SERVICE
-          predicates:
-            - Path=/api/orders/{segment}
-          filters:
-            - SetPath=/orders/{segment}
+            - SetPath=/customers/{segment}
 
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
-    registry-fetch-interval-seconds: 5
+    fetch-registry: true
+    register-with-eureka: true
     healthcheck:
       enabled: true
   instance:
@@ -47,19 +34,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,gateway,routes,globalfilters
-      base-path: /actuator
+        include: health,info,gateway
   endpoint:
-    gateway:
-      enabled: true
-    routes:
-      enabled: true
     health:
       show-details: always
-    metrics:
-      enabled: true
-
-logging:
-  level:
-    org.springframework.cloud.gateway: DEBUG
-    org.springframework.web: WARN
