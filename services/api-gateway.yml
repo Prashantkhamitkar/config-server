@@ -1,5 +1,5 @@
 server:
-  port: 8080  # Changed from 8081 to avoid conflict with customer-service
+  port: 8081  # Changed from 8081 to avoid conflict with customer-service
 
 spring:
   application:
