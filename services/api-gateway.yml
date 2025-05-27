@@ -11,7 +11,7 @@ spring:
           enabled: false 
       routes:
         - id: customer-service
-          uri: lb://CUSTOMER-SERVICE
+          uri: http://localhost:8083/
           predicates:
             - Path=/api/customers/**
           filters:
