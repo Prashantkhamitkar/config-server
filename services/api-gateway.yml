@@ -8,33 +8,43 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: false
+          enabled: false  # Disable auto-discovery
       routes:
         - id: customer-service
-          uri: lb://CUSTOMER-SERVICE
+          uri: lb://CUSTOMER-SERVICE  # Must match Eureka registration name exactly
           predicates:
             - Path=/api/customers/**
           filters:
-            - SetPath=/customers/{segment}
+            - StripPrefix=0  # Forward the full path including /api/customers
+
+        - id: product-service
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/api/products/**
+          filters:
+            - StripPrefix=0
+
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/api/orders/**
+          filters:
+            - StripPrefix=0
 
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
-    fetch-registry: true
-    register-with-eureka: true
-    healthcheck:
-      enabled: true
+    registry-fetch-interval-seconds: 5
   instance:
     prefer-ip-address: true
     lease-renewal-interval-in-seconds: 10
-    lease-expiration-duration-in-seconds: 30
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,gateway
+        include: health,info,gateway,routes
   endpoint:
     health:
       show-details: always
