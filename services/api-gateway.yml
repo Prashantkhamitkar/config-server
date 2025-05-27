@@ -1,5 +1,5 @@
 server:
-  port: 8081 # Must match what's registered in Eureka (8081)
+  port: 8081
 
 spring:
   application:
@@ -13,34 +13,46 @@ spring:
         - id: customer-service
           uri: lb://CUSTOMER-SERVICE
           predicates:
-            - Path=/api/customers/**
+            - Path=/api/customers/{segment}  # Explicit path variable
           filters:
-            - RewritePath=/api/customers/(?<segment>.*), /$\{segment} # Remove /api/customers prefix
+            - SetPath=/customers/{segment}  # More reliable path rewriting
+            - name: CircuitBreaker
+              args:
+                name: customerService
+                fallbackUri: forward:/fallback/customer
 
         - id: product-service
           uri: lb://PRODUCT-SERVICE
           predicates:
-            - Path=/api/products/**
+            - Path=/api/products/{segment}
           filters:
-            - RewritePath=/api/products/(?<segment>.*), /$\{segment}
+            - SetPath=/products/{segment}
 
         - id: order-service
           uri: lb://ORDER-SERVICE
           predicates:
-            - Path=/api/orders/**
+            - Path=/api/orders/{segment}
           filters:
-            - RewritePath=/api/orders/(?<segment>.*), /$\{segment}
+            - SetPath=/orders/{segment}
 
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
     registry-fetch-interval-seconds: 5
+    healthcheck:
+      enabled: true
   instance:
     prefer-ip-address: true
     lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
 
 management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway,routes,globalfilters
+      base-path: /actuator
   endpoint:
     gateway:
       enabled: true
@@ -48,10 +60,10 @@ management:
       enabled: true
     health:
       show-details: always
-  endpoints:
-    web:
-      exposure:
-        include: "*"  
-      base-path: /actuator
-      path-mapping:
-        health: health
+    metrics:
+      enabled: true
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web: WARN
