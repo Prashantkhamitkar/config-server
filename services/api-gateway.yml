@@ -8,14 +8,14 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: false  # Disable auto-discovery
+          enabled: false  
       routes:
         - id: customer-service
-          uri: lb://CUSTOMER-SERVICE  # Must match Eureka registration name exactly
+          uri: lb://CUSTOMER-SERVICE  
           predicates:
             - Path=/api/customers/**
           filters:
-            - StripPrefix=0  # Forward the full path including /api/customers
+            - StripPrefix=0  
 
         - id: product-service
           uri: lb://PRODUCT-SERVICE

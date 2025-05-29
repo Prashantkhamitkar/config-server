@@ -2,6 +2,14 @@ server:
   port: 8082
 
 spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: product-service-group  # Unique for each service
+      auto-offset-reset: earliest
+    producer:  # Only needed if Product Service publishes events
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
   application:
     name: product-service
   datasource:
