@@ -10,6 +10,8 @@ spring:
     producer:  # Only needed if Product Service publishes events
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.trusted.packages: "com.product_service.event
   application:
     name: product-service
   datasource:
